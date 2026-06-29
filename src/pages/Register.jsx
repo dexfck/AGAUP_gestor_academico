@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { login } from '../services/auth';
-import { BookOpen, User, Lock, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { register, login } from '../services/auth';
+import { BookOpen, User, Lock, Loader2, Mail, GraduationCap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function Login({ onLogin }) {
+export default function Register({ onLogin }) {
   const [matricula, setMatricula] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [carrera, setCarrera] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
+      await register(matricula, nombre, carrera, password);
+      // Auto login
       const data = await login(matricula, password);
       onLogin(data.usuario);
     } catch (err) {
-      setError('Credenciales inválidas o error de conexión.');
+      setError(err.response?.data?.error || err.response?.data?.message || 'Error al registrarse. Verifique los datos.');
     } finally {
       setLoading(false);
     }
@@ -34,12 +39,12 @@ export default function Login({ onLogin }) {
       >
         <div className="bg-blue-900 p-6 text-center">
           <BookOpen className="w-12 h-12 text-blue-100 mx-auto mb-3" />
-          <h2 className="text-2xl font-bold text-white">Gestión Académica</h2>
-          <p className="text-blue-200 text-sm mt-1">Portal Estudiantil (AGAUP)</p>
+          <h2 className="text-2xl font-bold text-white">Registro</h2>
+          <p className="text-blue-200 text-sm mt-1">Crea tu cuenta de estudiante</p>
         </div>
         
         <div className="p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Matrícula</label>
               <div className="relative">
@@ -53,6 +58,40 @@ export default function Login({ onLogin }) {
                   onChange={(e) => setMatricula(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm transition-shadow outline-none"
                   placeholder="Ej: 25-1768"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Nombre Completo</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm transition-shadow outline-none"
+                  placeholder="Juan Pérez"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Carrera</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <GraduationCap className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={carrera}
+                  onChange={(e) => setCarrera(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm transition-shadow outline-none"
+                  placeholder="Ingeniería en Sistemas"
                 />
               </div>
             </div>
@@ -86,13 +125,14 @@ export default function Login({ onLogin }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70 mt-4"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Iniciar Sesión"}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Registrarse"}
             </button>
+            
             <div className="text-center mt-4">
-              <Link to="/register" className="text-sm text-slate-500 hover:text-blue-600 transition-colors">
-                ¿No tienes cuenta? Registrate aquí
+              <Link to="/" className="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                ¿Ya tienes cuenta? Iniciar Sesión
               </Link>
             </div>
           </form>

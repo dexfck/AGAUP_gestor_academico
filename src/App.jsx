@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Materias from './pages/Materias';
 import Calculadora from './pages/Calculadora';
@@ -46,6 +47,11 @@ function App() {
       <AnimatePresence mode="wait">
         {!user ? (
           <Routes>
+            <Route path="/register" element={
+              <motion.div key="register" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <Register onLogin={(u) => setUser(u)} />
+              </motion.div>
+            } />
             <Route path="*" element={
               <motion.div key="login" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 <Login onLogin={(u) => setUser(u)} />

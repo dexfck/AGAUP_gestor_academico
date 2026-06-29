@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { getMaterias } from '../services/materias';
+import { getInscripciones } from '../services/inscripciones';
 import { Loader2, Calculator as CalcIcon } from 'lucide-react';
 
 export default function Calculadora() {
@@ -11,8 +12,20 @@ export default function Calculadora() {
   useEffect(() => {
     const fetchMaterias = async () => {
       try {
-        const data = await getMaterias();
-        setMaterias(data.materias || data || []);
+        const [matData, insData] = await Promise.all([getMaterias(), getInscripciones()]);
+        
+        const allMaterias = matData.materias || matData || [];
+        const insList = insData.inscripciones || insData || [];
+        
+        const currentUser = JSON.parse(localStorage.getItem('usuario') || '{}');
+        const key = `mis_materias_${currentUser.matricula}`;
+        const misMaterias = JSON.parse(localStorage.getItem(key) || '[]');
+        
+        const filteredMaterias = allMaterias.filter(mat => 
+          misMaterias.includes(mat.id) || insList.some(ins => ins.materia_id === mat.id)
+        );
+        
+        setMaterias(filteredMaterias);
       } catch (err) {
         console.error(err);
       } finally {

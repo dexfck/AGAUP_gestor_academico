@@ -22,8 +22,19 @@ export default function Materias() {
     setLoading(true);
     try {
       const [matData, insData] = await Promise.all([getMaterias(), getInscripciones()]);
-      setMaterias(matData.materias || matData || []);
-      setInscripciones(insData.inscripciones || insData || []);
+      const allMaterias = matData.materias || matData || [];
+      const insList = insData.inscripciones || insData || [];
+      
+      const currentUser = JSON.parse(localStorage.getItem('usuario') || '{}');
+      const key = `mis_materias_${currentUser.matricula}`;
+      const misMaterias = JSON.parse(localStorage.getItem(key) || '[]');
+      
+      const filteredMaterias = allMaterias.filter(mat => 
+        misMaterias.includes(mat.id) || insList.some(ins => ins.materia_id === mat.id)
+      );
+      
+      setMaterias(filteredMaterias);
+      setInscripciones(insList);
     } catch (err) {
       console.error("Fallo al cargar datos:", err);
       setErrorMsg('Error al cargar el catálogo de materias.');
@@ -42,6 +53,17 @@ export default function Materias() {
     if (!newMateria.id || !newMateria.nombre) return;
     try {
       await createMateria(newMateria);
+      
+      const currentUser = JSON.parse(localStorage.getItem('usuario') || '{}');
+      if (currentUser.matricula) {
+        const key = `mis_materias_${currentUser.matricula}`;
+        const misMaterias = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!misMaterias.includes(newMateria.id)) {
+          misMaterias.push(newMateria.id);
+          localStorage.setItem(key, JSON.stringify(misMaterias));
+        }
+      }
+
       setIsMateriaModalOpen(false);
       setNewMateria({ id: '', nombre: '', creditos: 3 });
       loadData();
@@ -54,6 +76,15 @@ export default function Materias() {
     if (!window.confirm("¿Seguro que deseas eliminar esta materia del sistema? Esto podría afectar a otros usuarios si comparten catálogo.")) return;
     try {
       await deleteMateria(id);
+      
+      const currentUser = JSON.parse(localStorage.getItem('usuario') || '{}');
+      if (currentUser.matricula) {
+        const key = `mis_materias_${currentUser.matricula}`;
+        let misMaterias = JSON.parse(localStorage.getItem(key) || '[]');
+        misMaterias = misMaterias.filter(mId => mId !== id);
+        localStorage.setItem(key, JSON.stringify(misMaterias));
+      }
+
       loadData();
     } catch (err) {
       if (err.response?.status === 500) {
