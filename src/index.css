@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    @apply overscroll-none;
+  }
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-slate-50 text-slate-900 overscroll-none;
   }
 }

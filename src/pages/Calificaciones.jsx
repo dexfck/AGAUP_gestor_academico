@@ -116,7 +116,7 @@ export default function Calificaciones() {
 
   return (
     <div className="p-8 relative">
-      <div className="flex justify-between items-center mb-6">
+      <div className="sticky top-0 z-10 bg-slate-50 pt-8 pb-4 -mt-8 -mx-8 px-8 flex justify-between items-center mb-6 border-b border-slate-200">
         <h2 className="text-3xl font-bold text-slate-800">Calificaciones</h2>
         {activeTab === 'asignar' && (
           <button 

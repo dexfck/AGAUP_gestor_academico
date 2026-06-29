@@ -135,7 +135,7 @@ export default function Calculadora() {
           </div>
           
           {materias.length > 0 && (
-            <div className="bg-blue-50 p-6 flex justify-between items-center border-t border-blue-100">
+            <div className="sticky bottom-0 z-10 bg-blue-50 p-6 flex justify-between items-center border-t border-blue-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
               <div>
                 <p className="text-blue-900 font-semibold">Índice Proyectado</p>
                 <p className="text-sm text-blue-700">Basado en tus calificaciones hipotéticas</p>

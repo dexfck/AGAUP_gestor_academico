@@ -74,4 +74,4 @@ Este proyecto se ha desarrollado siguiendo estrictas reglas de UI/UX, utilizando
    ```
 
 ---
-*Diseñado con pasión por la simplicidad y la productividad estudiantil.*
+
