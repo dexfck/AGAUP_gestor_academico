@@ -25,6 +25,7 @@ api.interceptors.response.use(
       console.warn("Token expirado, cerrando sesión automáticamente...");
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
+      localStorage.setItem('session_expired', 'true');
       window.location.href = '/'; 
     } else if (error.response && error.response.status === 401 && error.config.url.includes('/api/auth/login')) {
         const msg = error.response?.data?.error || error.response?.data?.message || 'Credenciales incorrectas';

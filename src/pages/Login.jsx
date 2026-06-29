@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { login } from '../services/auth';
 import { BookOpen, User, Lock, Loader2 } from 'lucide-react';
@@ -9,6 +9,15 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('session_expired')) {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('show_error_toast', { detail: 'Sesión caducada, inicie sesión nuevamente.' }));
+        localStorage.removeItem('session_expired');
+      }, 300);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
